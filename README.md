@@ -1,4 +1,4 @@
-# Interractive map for marking running/cycling workout sessions
+# Interactive map for marking running/cycling workout sessions
 
 Sessions are stored in localStorage API and persist on reload.
 

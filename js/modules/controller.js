@@ -1,12 +1,12 @@
 
-import { AppBrowser } from './browser.js';
-import { AppData } from './data.js';
+import BrowserController from './view.js';
+import DataController from './model.js';
 
 
-export class AppCtrl {
+export default class AppCtrl {
     constructor() {
-        this.dataCtrl = new AppData();
-        this.browserCtrl = new AppBrowser();
+        this.dataCtrl = new DataController();
+        this.browserCtrl = new BrowserController();
     }
     
     /**
@@ -39,7 +39,7 @@ export class AppCtrl {
                                 lng: data.coords.longitude };
         } catch (err) {
             if (!ip_coordinates) throw Error("Map cannot be set");
-            console.error("Geolocation rejected, keeping IP position"), err;
+            console.error("Geolocation rejected, keeping IP position");
         }
         if (geo_coordinates) {
             coords = geo_coordinates;
@@ -115,8 +115,8 @@ export class AppCtrl {
      */
     _setTypeChangeEL() {
         const { inputType, 
-            inputCadence, 
-            inputElevation } = this.browserCtrl.htmlElements();
+                inputCadence, 
+                inputElevation } = this.browserCtrl.htmlElements();
         inputType.addEventListener('change', function(e) {
             e.preventDefault();
             [inputCadence, inputElevation].forEach(el => 
@@ -127,6 +127,7 @@ export class AppCtrl {
     /**
      * Set event listener on the workout blocks on the left panel.
      * Re-centers the map to the clicked workout's associated marker.
+     * Deletes workout if delete button is clicked, incl its marker and data.
      */
     _setWorkoutsEL() {
         const workoutsContainer = this.browserCtrl.htmlElements().containerWorkouts;
@@ -137,10 +138,17 @@ export class AppCtrl {
             if (!workout) { console.error('Workout not found'); return; }
             const coords = workout.getMarker().getLatLng();
             this.browserCtrl.reCenter(coords);
-        }
+        };
         workoutsContainer.addEventListener('click', moveToPopup);
+        const deleteWorkout = (event) => {
+            if (event.target.classList.contains('workout--del')) {
+                const wrkBlock = event.target.closest('.workout');
+                const wrk = this.dataCtrl.findWorkout(Number(wrkBlock.dataset.id));
+                this.dataCtrl.delWorkout(wrk);
+                this.browserCtrl.removeMarker(wrk.getMarker());
+                this.browserCtrl.removeWorkoutElem(wrkBlock);
+            }
+        };
+        workoutsContainer.addEventListener('click', deleteWorkout);
     }
-
-    // IMPLEMENT delete workout
-    // IMPLEMENT delete all workouts
 }

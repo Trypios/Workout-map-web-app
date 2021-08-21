@@ -1,5 +1,5 @@
 
-export class AppBrowser {
+export default class BrowserController {
 
     #htmlElements = {
         map: L.map('map'),
@@ -15,18 +15,10 @@ export class AppBrowser {
     #config = {
         mapZoomLevel: 13,
         markerDefaultType: 'leaflet',
-        runningFigures: { icon: '🏃‍♂️',
-                          timeIcon: '⏱',
-                          speedIcon: '⚡️',
-                          speedUnit: 'min/km',
-                          effortIcon: '🦶🏼',
-                          effortUnit: 'spm' },
-        cyclingFigures: { icon: '🚴‍♀️', 
-                          timeIcon: '⏱',
-                          speedIcon: '⚡️',
-                          speedUnit: 'km/hour',
-                          effortIcon: '⛰',
-                          effortUnit: 'm' }
+        runningFigures: { icon: '🏃‍♂️', timeIcon: '⏱', speedIcon: '⚡️',
+                          speedUnit: 'min/km', effortIcon: '🦶🏼', effortUnit: 'spm' },
+        cyclingFigures: { icon: '🚴‍♀️', timeIcon: '⏱', speedIcon: '⚡️',
+                          speedUnit: 'km/hour', effortIcon: '⛰', effortUnit: 'm' }
     }
 
     constructor() {}
@@ -119,6 +111,7 @@ export class AppBrowser {
                                                  : this.#config.cyclingFigures;
         const html = `
         <li class="workout workout--${wrk.type}" data-id=${wrk.id}>
+            <button class="workout--del">x</button>
             <h2 class="workout__title">${action} on ${wrk.getDate(true)}</h2>
             <div class="workout__details">
                 <span class="workout__icon">${figures.icon}</span>
@@ -142,6 +135,14 @@ export class AppBrowser {
             </div>
         </li>`
         this.#htmlElements.form.insertAdjacentHTML('afterend', html);
+    }
+
+    /**
+     * Remove workout element from left panel.
+     * @param {Element} wrkElem - Html element. 
+     */
+    removeWorkoutElem(wrkElem) {
+        wrkElem.remove();
     }
 
     /**
@@ -182,7 +183,7 @@ export class AppBrowser {
     getFormValues() {
         const elements = this.htmlElements();
         return { type : elements.inputType.value,
-                 // '+' operand implicitly casts string to number
+                 // '+' operand implicitly casts String to Number
                  distance : + elements.inputDistance.value,
                  duration : + elements.inputDuration.value,
                  cadence : + elements.inputCadence.value,

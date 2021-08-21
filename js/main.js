@@ -1,6 +1,4 @@
-'use strict';
 
-import { AppCtrl } from './modules/controller.js';
+import App from './modules/controller.js';
 
-new AppCtrl().run();
-
+new App().run();

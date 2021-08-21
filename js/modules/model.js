@@ -2,7 +2,7 @@
 import { Workout, Running, Cycling } from './workouts.js';
 
 
-export class AppData {
+export default class DataController {
 
     #workouts = [];
 
@@ -78,6 +78,13 @@ export class AppData {
         } catch (err) {
             return Promise.reject(false);
         }
+    }
+
+    delWorkout(wrk) {
+        console.log(wrk);
+        const pos = this.#workouts.indexOf(wrk);
+        if (pos > -1) this.#workouts.splice(pos, 1);
+        localStorage.removeItem(wrk.id);
     }
 
     /**
